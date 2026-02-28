@@ -18,13 +18,14 @@ export default function Home() {
               gap={5}
               baseColor="#271E37"
               activeColor="#29ff74"
-              proximity={330}
+              proximity={120}
               speedTrigger={100}
-              shockRadius={250}
-              shockStrength={11}
-              maxSpeed={5000}
-              resistance={750}
-              returnDuration={2.6}
+              shockRadius={200}
+              shockStrength={2}
+              maxSpeed={10}
+              resistance={0.9}
+              returnDuration={0.5}
+              style={{ width: "100%", height: "100%" }}
             />
           </div>
         </div>

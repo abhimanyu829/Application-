@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterSkill, setFilterSkill] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -107,9 +108,14 @@ export default function AdminDashboard() {
     );
   }
 
-  const filteredApplicants = filterSkill 
-    ? applicants.filter(app => app.primary_skill === filterSkill)
-    : applicants;
+  const filteredApplicants = applicants.filter(app => {
+    const matchesSkill = filterSkill ? app.primary_skill === filterSkill : true;
+    const matchesSearch = searchQuery 
+      ? app.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        app.email.toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
+    return matchesSkill && matchesSearch;
+  });
 
   const uniqueSkills = Array.from(new Set(applicants.map(app => app.primary_skill).filter(Boolean)));
 
@@ -125,7 +131,19 @@ export default function AdminDashboard() {
               Manage recruitment applications and team members.
             </p>
           </div>
-          <div className="mt-4 sm:ml-4 sm:mt-0 flex gap-4">
+          <div className="mt-4 sm:ml-4 sm:mt-0 flex flex-col sm:flex-row gap-4">
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Search className="h-4 w-4 text-black/40" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="block w-full border-0 border-b border-black/20 bg-transparent py-2 pl-10 pr-3 text-black focus:border-black focus:ring-0 sm:text-sm font-light transition-colors placeholder:text-black/40"
+              />
+            </div>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <Filter className="h-4 w-4 text-black/40" />
