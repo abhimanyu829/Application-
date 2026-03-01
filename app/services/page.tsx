@@ -1,9 +1,24 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'motion/react';
+import { useTermsProtection } from '@/hooks/useTermsProtection';
+import { Loader2 } from 'lucide-react';
 import { LayoutDashboard, Cpu, Code2, Globe, CircleCheck } from 'lucide-react';
 
 export default function Services() {
+  // Only enforce terms protection for logged-in users
+  const { isLoading: termsLoading, isAllowed: termsAccepted, user } = useTermsProtection();
+
+  // Show loading state while checking terms
+  if (user && termsLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-yellow-50">
+        <Loader2 className="h-8 w-8 animate-spin text-black" />
+      </div>
+    );
+  }
+
   const services = [
     {
       id: 'saas',
@@ -92,12 +107,12 @@ export default function Services() {
                   </div>
 
                   <div className="mt-10">
-                    <a
-                      href="#"
+                    <Link
+                      href={`/services/${service.id === 'saas' ? 'saas' : service.id === 'ai' ? 'ai-agents' : service.id === 'web' ? 'mvp-development' : 'enterprise-software'}`}
                       className="text-sm font-medium uppercase tracking-widest text-black hover:text-black/60 flex items-center gap-2 transition-colors"
                     >
                       Learn more <span aria-hidden="true">→</span>
-                    </a>
+                    </Link>
                   </div>
                 </dd>
               </motion.div>

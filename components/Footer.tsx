@@ -19,10 +19,10 @@ export default function Footer() {
           <div>
             <h3 className="text-xs font-medium text-black tracking-widest uppercase mb-8">Solutions</h3>
             <ul className="space-y-4">
-              <li><Link href="/services" className="text-sm font-light text-black/60 hover:text-black transition-colors">SaaS Platforms</Link></li>
-              <li><Link href="/services" className="text-sm font-light text-black/60 hover:text-black transition-colors">AI Agents</Link></li>
-              <li><Link href="/services" className="text-sm font-light text-black/60 hover:text-black transition-colors">Enterprise Software</Link></li>
-              <li><Link href="/services" className="text-sm font-light text-black/60 hover:text-black transition-colors">MVP Development</Link></li>
+              <li><Link href="/services/saas" className="text-sm font-light text-black/60 hover:text-black transition-colors">SaaS Platforms</Link></li>
+              <li><Link href="/services/ai-agents" className="text-sm font-light text-black/60 hover:text-black transition-colors">AI Agents</Link></li>
+              <li><Link href="/services/enterprise-software" className="text-sm font-light text-black/60 hover:text-black transition-colors">Enterprise Software</Link></li>
+              <li><Link href="/services/mvp-development" className="text-sm font-light text-black/60 hover:text-black transition-colors">MVP Development</Link></li>
             </ul>
           </div>
           <div>
@@ -37,8 +37,8 @@ export default function Footer() {
           <div>
             <h3 className="text-xs font-medium text-black tracking-widest uppercase mb-8">Legal</h3>
             <ul className="space-y-4">
-              <li><Link href="#" className="text-sm font-light text-black/60 hover:text-black transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="text-sm font-light text-black/60 hover:text-black transition-colors">Terms of Service</Link></li>
+              <li><Link href="/privacy-policy" className="text-sm font-light text-black/60 hover:text-black transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-sm font-light text-black/60 hover:text-black transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
         </div>

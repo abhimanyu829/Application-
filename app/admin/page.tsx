@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useTermsProtection } from '@/hooks/useTermsProtection';
 import { databases, storage, Query } from '@/lib/appwrite';
 import { Models } from 'appwrite';
 import { motion } from 'motion/react';
@@ -31,6 +32,7 @@ interface Applicant extends Models.Document {
 
 export default function AdminDashboard() {
   const { user, isAdmin, loading: authLoading } = useAuth();
+  const { isAllowed: termsAccepted, isLoading: termsLoading } = useTermsProtection();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,10 +42,10 @@ export default function AdminDashboard() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && termsAccepted && !termsLoading) {
       fetchApplicants();
     }
-  }, [isAdmin]);
+  }, [isAdmin, termsAccepted, termsLoading]);
 
   const fetchApplicants = async () => {
     try {
@@ -88,7 +90,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || termsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-yellow-50">
         <Loader2 className="h-8 w-8 animate-spin text-black" />
@@ -134,8 +136,7 @@ export default function AdminDashboard() {
             shockRadius={170}
             shockStrength={5}
             resistance={1100}
-            returnDuration={2.7}
-          />
+            returnDuration={2.7} style={undefined}          />
         </div>
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
