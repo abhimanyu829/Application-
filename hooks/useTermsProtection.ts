@@ -17,30 +17,37 @@ export function useTermsProtection() {
 
   useEffect(() => {
     const checkAccess = async () => {
-      // If still loading auth, wait
-      if (authLoading) {
-        return;
-      }
+      try {
+        // If still loading auth, wait
+        if (authLoading) {
+          return;
+        }
 
-      // If no user, redirect to home
-      if (!user) {
-        router.push('/');
+        // If no user, redirect to home
+        if (!user) {
+          router.push('/');
+          setIsLoading(false);
+          return;
+        }
+
+        // Check terms acceptance
+        const status = await checkTermsAcceptance(user.$id);
+        setTermsStatus(status);
+
+        // If terms not accepted, redirect
+        if (status.needsAcceptance) {
+          router.push('/accept-terms');
+        } else {
+          setIsAllowed(true);
+        }
+
         setIsLoading(false);
-        return;
-      }
-
-      // Check terms acceptance
-      const status = await checkTermsAcceptance(user.$id);
-      setTermsStatus(status);
-
-      // If terms not accepted, redirect
-      if (status.needsAcceptance) {
-        router.push('/accept-terms');
-      } else {
+      } catch (error) {
+        // If Appwrite is not available, just allow access
+        console.warn('Terms check failed (Appwrite unavailable):', error);
         setIsAllowed(true);
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
 
     checkAccess();

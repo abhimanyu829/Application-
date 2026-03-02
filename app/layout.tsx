@@ -4,6 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import RouteLoader from "./components/RouteLoader";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-yellow-50 text-black font-sans antialiased min-h-screen flex flex-col selection:bg-black selection:text-white" suppressHydrationWarning>
         <AuthProvider>
           <Navbar />
+          <RouteLoader />
           <main className="flex-grow">{children}</main>
           <Footer />
         </AuthProvider>

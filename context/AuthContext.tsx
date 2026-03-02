@@ -20,6 +20,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     checkUser();
+    // Safety timeout - mark as loaded after 5 seconds even if auth check is still pending
+    const timeout = setTimeout(() => setLoading(false), 5000);
+    return () => clearTimeout(timeout);
   }, []);
 
   const checkUser = async () => {
@@ -27,6 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const session = await account.get();
       setUser(session);
     } catch (error) {
+      // Appwrite not available, skip auth check
+      console.warn('Auth check failed:', error);
       setUser(null);
     } finally {
       setLoading(false);
