@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true, // Allows null/undefined values to be non-unique if multiple users don't have googleId
     },
+    avatar: {
+      type: String,
+      default: '',
+    },
     terms_accepted: {
       type: Boolean,
       default: false,

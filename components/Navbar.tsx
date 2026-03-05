@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, User, Menu, X } from 'lucide-react';
+import { LogOut, User, Menu, X, Lock } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const { user, loginWithGoogle, logout, isAdmin } = useAuth();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
@@ -15,6 +17,11 @@ export default function Navbar() {
       // In the new backend, the user object might already contain the picture URL if it came from Google
       if (!user) return;
       
+      if (user.avatar) {
+        setPhotoUrl(user.avatar);
+        return;
+      }
+
       if (user.picture) {
         setPhotoUrl(user.picture);
         return;
@@ -60,12 +67,23 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Services', href: '/services' },
     { name: 'Departments', href: '/departments' },
+    { name: 'Team', href: '/team' },
     { name: 'Careers', href: '/careers' },
   ];
 
   if (isAdmin) {
     navLinks.push({ name: 'Admin', href: '/admin' });
   }
+
+  const handleAdminPanel = () => {
+    // Check if admin token exists
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      router.push('/admin/dashboard');
+    } else {
+      router.push('/admin/login');
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-yellow-50/80 backdrop-blur-md">
@@ -82,7 +100,7 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-10 flex items-center space-x-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -92,6 +110,14 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              
+              <button
+                onClick={handleAdminPanel}
+                className="group flex items-center gap-2 px-3 py-2 text-sm font-light text-black/60 transition-colors hover:text-black uppercase tracking-widest"
+              >
+                <Lock className="h-3 w-3 transition-transform group-hover:scale-110" />
+                Admin Panel
+              </button>
             </div>
           </div>
 
@@ -155,6 +181,17 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                handleAdminPanel();
+              }}
+              className="flex w-full items-center gap-2 px-3 py-4 text-base font-light text-black/60 hover:text-black uppercase tracking-widest text-left"
+            >
+              <Lock className="h-4 w-4" />
+              Admin Panel
+            </button>
           </div>
           <div className="border-t border-black/5 pb-6 pt-4">
             {user ? (

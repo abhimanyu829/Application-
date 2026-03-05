@@ -10,6 +10,7 @@ interface User {
   email: string;
   role: string;
   token: string;
+  avatar?: string;
   picture?: string;
   $id?: string; // For compatibility if referenced elsewhere
   terms_accepted?: boolean;

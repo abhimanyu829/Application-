@@ -125,6 +125,8 @@ const updateUser = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/google
 // @access  Public
 const googleAuth = asyncHandler(async (req, res) => {
+
+  console.log("Google login request body:", req.body);
   const { idToken, isAccessToken } = req.body;
 
   if (!idToken) {
@@ -167,11 +169,10 @@ const googleAuth = asyncHandler(async (req, res) => {
     let user = await User.findOne({ email });
 
     if (user) {
-      // If user exists but doesn't have googleId (e.g. registered with email/password), update it
-      if (!user.googleId) {
-        user.googleId = googleId;
-        await user.save();
-      }
+      // Update googleId and avatar if they are missing or changed
+      user.googleId = googleId;
+      user.avatar = picture || user.avatar;
+      await user.save();
     } else {
       // Create new user
       // Password is not required for Google users as per schema
@@ -179,6 +180,7 @@ const googleAuth = asyncHandler(async (req, res) => {
         name,
         email,
         googleId,
+        avatar: picture,
         password: '', // Empty password for Google users
       });
     }
@@ -188,7 +190,8 @@ const googleAuth = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      picture, // Return picture from Google
+      avatar: user.avatar,
+      picture: user.avatar, // For backward compatibility
       token: generateToken(user._id),
     });
   } catch (error) {

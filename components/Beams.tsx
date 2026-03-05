@@ -4,7 +4,7 @@ import { forwardRef, useImperativeHandle, useEffect, useRef, useMemo, FC, ReactN
 
 import * as THREE from 'three';
 
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { degToRad } from 'three/src/math/MathUtils.js';
 
@@ -76,6 +76,47 @@ function extendMaterial<T extends THREE.Material = THREE.Material>(
 
   return mat;
 }
+
+const VideoBackground = () => {
+  const [video] = useState(() => {
+    const vid = document.createElement('video');
+    vid.src = '/images/logo.mp4';
+    vid.crossOrigin = 'Anonymous';
+    vid.loop = true;
+    vid.muted = true;
+    vid.playsInline = true;
+    vid.autoplay = true;
+    return vid;
+  });
+
+  useEffect(() => {
+    const playVideo = () => {
+      video.play().catch((e) => {
+        console.log('Autoplay blocked, waiting for interaction', e);
+        const onInteraction = () => {
+          video.play();
+          window.removeEventListener('click', onInteraction);
+          window.removeEventListener('touchstart', onInteraction);
+          window.removeEventListener('keydown', onInteraction);
+        };
+        window.addEventListener('click', onInteraction);
+        window.addEventListener('touchstart', onInteraction);
+        window.addEventListener('keydown', onInteraction);
+      });
+    };
+
+    playVideo();
+  }, [video]);
+
+  return (
+    <mesh position={[0, 0, 1]}>
+      <planeGeometry args={[16, 9]} />
+      <meshBasicMaterial>
+        <videoTexture attach="map" args={[video]} />
+      </meshBasicMaterial>
+    </mesh>
+  );
+};
 
 const CanvasWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const [webGLError, setWebGLError] = useState(false);
@@ -283,7 +324,7 @@ const Beams: FC<BeamsProps> = ({
           roughness: 0.3,
           metalness: 0.3,
           uSpeed: { shared: true, mixed: true, linked: true, value: speed },
-          envMapIntensity: 10,
+          envMapIntensity: 100,
           uNoiseIntensity: noiseIntensity,
           uScale: scale
         }
@@ -297,8 +338,9 @@ const Beams: FC<BeamsProps> = ({
         <PlaneNoise ref={meshRef} material={beamMaterial} count={beamNumber} width={beamWidth} height={beamHeight} />
         <DirLight color={lightColor} position={[0, 3, 10]} />
       </group>
+      <VideoBackground />
       <ambientLight intensity={1} />
-      <color attach="background" args={['#fefce8']} />
+      {/* <color attach="background" args={['#fefce8']} /> */}
       <PerspectiveCamera makeDefault position={[0, 0, 20]} fov={30} />
     </CanvasWrapper>
   );
@@ -326,8 +368,8 @@ function createStackedPlanesBufferGeometry(
 
   for (let i = 0; i < n; i++) {
     const xOffset = xOffsetBase + i * (width + spacing);
-    const uvXOffset = Math.random() * 300;
-    const uvYOffset = Math.random() * 300;
+    const uvXOffset = Math.random() * 600;
+    const uvYOffset = Math.random() * 600;
 
     for (let j = 0; j <= heightSegments; j++) {
       const y = height * (j / heightSegments - 0.5);

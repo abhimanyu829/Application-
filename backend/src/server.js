@@ -28,14 +28,9 @@ app.use(limiter);
 // Enable CORS
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://application-8es6.vercel.app",
-      process.env.FRONTEND_URL,
-      process.env.APP_URL
-    ].filter(Boolean),
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
-    credentials: true
+    origin: "*",
+    methods: ["GET","POST","PATCH","PUT","DELETE","OPTIONS"],
+    allowedHeaders: ["Content-Type","Authorization"],
   })
 );
 
@@ -49,7 +44,13 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/auth/admin', require('./routes/adminAuthRoutes'));
 app.use('/api/applicants', require('./routes/applicantRoutes'));
+app.use('/api/team', require('./routes/teamRoutes'));
+
+// Setup default admin on server start
+const { setupDefaultAdmin } = require('./utils/setupAdmin');
+setupDefaultAdmin();
 
 // Error handler
 app.use(errorHandler);

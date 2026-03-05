@@ -7,11 +7,11 @@ const {
   updateApplicantStatus,
 } = require('../controllers/applicantController');
 const { protect } = require('../middleware/auth');
-const { admin } = require('../middleware/admin');
+const { adminProtect } = require('../middleware/adminAuth');
 
 router.post('/', protect, createApplicant);
 router.get('/my', protect, getMyApplicant);
-router.get('/', protect, admin, getApplicants);
-router.patch('/:id/status', protect, admin, updateApplicantStatus);
+router.get('/', adminProtect, getApplicants);
+router.patch('/:id/status', adminProtect, updateApplicantStatus);
 
 module.exports = router;
